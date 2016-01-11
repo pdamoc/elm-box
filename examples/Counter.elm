@@ -70,3 +70,8 @@ counter = Box.toBox
   , modelDecoder = modelDecoder
   , modelEncoder = modelEncoder
   }
+
+
+
+main : Signal Html
+main = .output <| Box.start counter
