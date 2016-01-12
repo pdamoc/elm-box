@@ -35,8 +35,8 @@ type alias App output =
   }
 
 
-toBox : BoxConfig action model output -> List (Box output) -> Signal.Address Action -> Box output
-toBox boxCfg children address = 
+toBox : BoxConfig action model output -> List (Box output) -> List (action -> List Message) -> ActionAddress -> Box output
+toBox boxCfg children actionHandlers address = 
   let 
     decodedNext : JEnc.Value -> JEnc.Value -> (JEnc.Value, List Message)
     decodedNext encodedAction encodedModel = 
@@ -51,8 +51,9 @@ toBox boxCfg children address =
           Ok (a, m) -> 
             let 
               (m', msgs) = boxCfg.next a m
+              ahMsgs = List.concatMap (\ah -> ah a) actionHandlers
             in 
-              (boxCfg.modelEncoder m', msgs)
+              (boxCfg.modelEncoder m', msgs++ahMsgs)
     
     view model children =
       let 

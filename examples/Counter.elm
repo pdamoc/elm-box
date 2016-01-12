@@ -63,8 +63,10 @@ actionEncoder action =
     Increment -> JEnc.object [("tag", JEnc.string "Increment")]
     Decrement -> JEnc.object [("tag", JEnc.string "Decrement")]
 
+onCounter : Box.Message -> Action -> List Message
+onCounter message action = [message]
 
-counter : Box.ActionAddress -> Box Html
+counter : List (Action-> List Message) -> Box.ActionAddress -> Box Html
 counter = Box.toBox
   { init = init
   , next = next
@@ -78,4 +80,4 @@ counter = Box.toBox
 
 
 main : Signal Html
-main = .output <| Box.start counter
+main = .output <| Box.start <| counter []
