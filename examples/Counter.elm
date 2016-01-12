@@ -64,7 +64,7 @@ actionEncoder action =
     Decrement -> JEnc.object [("tag", JEnc.string "Decrement")]
 
 
-counter : Signal.Address Box.Action -> Box Html
+counter : Box.ActionAddress -> Box Html
 counter = Box.toBox
   { init = init
   , next = next
@@ -73,7 +73,7 @@ counter = Box.toBox
   , actionEncoder = actionEncoder
   , modelDecoder = modelDecoder
   , modelEncoder = modelEncoder
-  }
+  } []
 
 
 

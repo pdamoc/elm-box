@@ -5,9 +5,7 @@ import Signal
 import Json.Encode as JEnc
 import Json.Decode as JDec
 
-import Mouse 
-import Keyboard
-import Char
+import Html exposing (Html, div)
 
 type alias Message = Task () ()
 
@@ -15,7 +13,6 @@ type alias Leaf output =
   { init : JEnc.Value
   , next : JEnc.Value -> JEnc.Value-> (JEnc.Value, List Message) 
   , view : JEnc.Value -> List output -> output
-  , toMessage : (Action -> Message)
   }
 
 type alias BoxConfig action model output = 
@@ -30,8 +27,16 @@ type alias BoxConfig action model output =
 
 type Box output =  Box (Leaf output) (List (Int, Box output) ) 
 
-toBox : BoxConfig action model output -> Signal.Address Action -> Box output
-toBox boxCfg address = 
+type Action = Own JEnc.Value | Child Int Action
+
+type alias App output =
+  { output : Signal output 
+  , msgs : Signal (Task () (List ()))  
+  }
+
+
+toBox : BoxConfig action model output -> List (Box output) -> Signal.Address Action -> Box output
+toBox boxCfg children address = 
   let 
     decodedNext : JEnc.Value -> JEnc.Value -> (JEnc.Value, List Message)
     decodedNext encodedAction encodedModel = 
@@ -60,32 +65,25 @@ toBox boxCfg address =
     { init = boxCfg.modelEncoder boxCfg.init
     , next = decodedNext
     , view = view
-    , toMessage = (\act -> Task.succeed ())  
     }
   in 
-    Box leaf [] 
+    Box leaf (List.indexedMap (,) children)
 
+type alias ActionAddress = Signal.Address Action
 
-type Action = Own JEnc.Value | Child Int JEnc.Value
+vBox : List (ActionAddress -> Box Html) -> ActionAddress -> Box Html
+vBox children address =
+  let 
+    view m children = 
+      div []
+      children
 
-type alias App output =
-  { output : Signal output 
-  , msgs : Signal (Task () (List ()))  
-  }
+  in 
+    Box { init = JEnc.null
+    , next = (\a m -> (m, []))
+    , view = view
+    } (List.indexedMap (\idx c -> (idx, c (Signal.forwardTo address (Child idx)) )) children)
 
-type alias SysEvent = ( (), ( Int, Int ), Char.KeyCode )
-
-mouseAndKeyboard : Signal SysEvent
-mouseAndKeyboard = 
-  Signal.map3 (,,) Mouse.clicks Mouse.position Keyboard.presses
-
-type SuperState = Local Int JEnc.Value (List SuperState)
-
-toInit : (Int, Box output) -> SuperState
-toInit (idx, (Box leaf children)) =
-  case children of
-    [] -> Local idx leaf.init []
-    xs -> Local idx leaf.init (List.map toInit children)
 
 
 start : (Signal.Address Action -> Box output) -> App output 
@@ -105,7 +103,18 @@ start  unAddressedWidget =
             (Box {leaf| init=state'} children, msgs')
 
         Child cIdx act -> 
-          ((Box leaf children), msgs)
+          let 
+            update (idx, box) = 
+              if idx == cIdx 
+              then 
+                let 
+                  (box', boxMsgs) = next act (box, [])
+                in
+                  ((idx, box'), boxMsgs)
+              else ((idx, box), [])
+            (children', msgs') = List.unzip <| List.map update children
+          in 
+            ((Box leaf children'), msgs++(List.concat msgs'))
 
     out = Signal.foldp next init mailbox.signal
 
