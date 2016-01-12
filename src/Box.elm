@@ -21,7 +21,7 @@ type alias Leaf output =
 type alias BoxConfig action model output = 
   { init : model
   , next : (action -> model -> (model, List Message))
-  , view : (model -> List output -> output)
+  , view : (Signal.Address action -> model -> List output -> output)
   , actionDecoder : JDec.Decoder action
   , actionEncoder : (action -> JEnc.Value)
   , modelDecoder : JDec.Decoder model
@@ -30,8 +30,8 @@ type alias BoxConfig action model output =
 
 type Box output =  Box (Leaf output) (List (Int, Box output) ) 
 
-toBox : BoxConfig action model output -> Box output
-toBox boxCfg = 
+toBox : BoxConfig action model output -> Signal.Address Action -> Box output
+toBox boxCfg address = 
   let 
     decodedNext : JEnc.Value -> JEnc.Value -> (JEnc.Value, List Message)
     decodedNext encodedAction encodedModel = 
@@ -40,7 +40,6 @@ toBox boxCfg =
           (JDec.decodeValue boxCfg.actionDecoder encodedAction) 
           `Result.andThen`
           (\a -> Result.map (\m ->(a,m)) <| JDec.decodeValue boxCfg.modelDecoder encodedModel)
-
       in 
         case dec of
           Err e -> (encodedModel, [])
@@ -53,8 +52,9 @@ toBox boxCfg =
     view model children =
       let 
         model' = ((Maybe.withDefault boxCfg.init) << Result.toMaybe << (JDec.decodeValue boxCfg.modelDecoder)) model
+        decodedAddress = Signal.forwardTo address <| Own << boxCfg.actionEncoder
       in 
-        boxCfg.view model' children
+        boxCfg.view decodedAddress model' children
 
     leaf =
     { init = boxCfg.modelEncoder boxCfg.init
@@ -88,15 +88,15 @@ toInit (idx, (Box leaf children)) =
     xs -> Local idx leaf.init (List.map toInit children)
 
 
-start : Box output -> App output 
-start (Box leaf children) =
+start : (Signal.Address Action -> Box output) -> App output 
+start  unAddressedWidget =
   let 
     mailbox = Signal.mailbox (Own JEnc.null)
-    
+    (Box leaf children) = unAddressedWidget mailbox.address
     init = (Box leaf children, [])
 
     next : Action -> (Box output, List Message) -> (Box output, List Message)
-    next a ((Box leaf children), msgs) =
+    next a ((Box leaf children), msgs) = 
       case a of 
         Own act -> 
           let 

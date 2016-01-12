@@ -3,6 +3,7 @@ module Counter where
 import Box exposing (Box, BoxConfig, Message)
 import Html exposing (..)
 import Html.Attributes exposing (style)
+import Html.Events exposing (onClick)
 
 import Json.Encode as JEnc
 import Json.Decode as JDec exposing ( (:=), andThen)
@@ -15,14 +16,17 @@ init = 1
 type Action = Increment | Decrement
 
 next : Action -> Model -> (Model, List Message)
-next action model = (model, []) 
+next action model = 
+  case action of
+    Increment -> (model+1, []) 
+    Decrement -> (model-1, []) 
 
-view : Model -> List Html -> Html
-view model children = 
+view : Signal.Address Action -> Model -> List Html -> Html
+view address model children = 
     div []
-    [ button [ ] [ text "-" ]
+    [ button [ onClick address Decrement ] [ text "-" ]
     , div [ countStyle ] [ text (toString model) ]
-    , button [  ] [ text "+" ]
+    , button [ onClick address Increment ] [ text "+" ]
     ]
 
 countStyle : Attribute
@@ -60,7 +64,7 @@ actionEncoder action =
     Decrement -> JEnc.object [("tag", JEnc.string "Decrement")]
 
 
-counter : Box Html
+counter : Signal.Address Box.Action -> Box Html
 counter = Box.toBox
   { init = init
   , next = next
