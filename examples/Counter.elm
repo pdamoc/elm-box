@@ -66,7 +66,7 @@ actionEncoder action =
 onCounter : Box.Message -> Action -> List Message
 onCounter message action = [message]
 
-counter : List (Action-> List Message) -> Box.ActionAddress -> Box Html
+counter : List (Action-> List Message) -> Box Html
 counter = Box.toBox
   { init = init
   , next = next

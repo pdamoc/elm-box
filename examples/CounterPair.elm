@@ -4,7 +4,7 @@ import Box exposing (Box)
 import Counter exposing (counter)
 
 
-counterPair : Box.ActionAddress -> Box Html
+counterPair : Box Html
 counterPair = 
   Box.vBox 
     [ counter [] 

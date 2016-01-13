@@ -12,7 +12,7 @@ type alias Message = Task () ()
 type alias Leaf output = 
   { init : JEnc.Value
   , next : JEnc.Value -> JEnc.Value-> (JEnc.Value, List Message) 
-  , view : JEnc.Value -> List output -> output
+  , view : JEnc.Value -> List output -> ActionAddress -> output
   }
 
 type alias BoxConfig action model output = 
@@ -25,18 +25,22 @@ type alias BoxConfig action model output =
   , modelEncoder : (model -> JEnc.Value)
   }
 
-type Box output =  Box (Leaf output) (List (Int, Box output) ) 
-
 type Action = Own JEnc.Value | Child Int Action
+
+type alias ActionAddress = Signal.Address Action
+
+type Box output =  Box ActionAddress (Leaf output) (List (Int, Box output) ) 
 
 type alias App output =
   { output : Signal output 
   , msgs : Signal (Task () (List ()))  
   }
 
+defaultActionAddress : ActionAddress
+defaultActionAddress = .address <| Signal.mailbox (Own JEnc.null)
 
-toBox : BoxConfig action model output -> List (Box output) -> List (action -> List Message) -> ActionAddress -> Box output
-toBox boxCfg children actionHandlers address = 
+toBox : BoxConfig action model output -> List (Box output) -> List (action -> List Message) -> Box output
+toBox boxCfg children actionHandlers = 
   let 
     decodedNext : JEnc.Value -> JEnc.Value -> (JEnc.Value, List Message)
     decodedNext encodedAction encodedModel = 
@@ -55,7 +59,7 @@ toBox boxCfg children actionHandlers address =
             in 
               (boxCfg.modelEncoder m', msgs++ahMsgs)
     
-    view model children =
+    view model children address =
       let 
         model' = ((Maybe.withDefault boxCfg.init) << Result.toMaybe << (JDec.decodeValue boxCfg.modelDecoder)) model
         decodedAddress = Signal.forwardTo address <| Own << boxCfg.actionEncoder
@@ -68,40 +72,53 @@ toBox boxCfg children actionHandlers address =
     , view = view
     }
   in 
-    Box leaf (List.indexedMap (,) children)
+    Box defaultActionAddress leaf (List.indexedMap (,) children)
 
-type alias ActionAddress = Signal.Address Action
 
-vBox : List (ActionAddress -> Box Html) -> ActionAddress -> Box Html
-vBox children address =
+vBox : List (Box Html) -> Box Html
+vBox children =
   let 
-    view m children = 
+    view m children address = 
       div []
       children
-
   in 
-    Box { init = JEnc.null
+    Box defaultActionAddress { init = JEnc.null
     , next = (\a m -> (m, []))
     , view = view
-    } (List.indexedMap (\idx c -> (idx, c (Signal.forwardTo address (Child idx)) )) children)
+    } (List.indexedMap (,) children)
 
 
+updateAddress : ActionAddress -> Box output -> Box output
+updateAddress newAddr (Box oldAddr leaf children) =
+  let 
+    updateChild (idx, box) =
+      let   
+        childAddress = (Signal.forwardTo newAddr (Child idx))
+      in 
+        (idx, updateAddress childAddress box) 
 
-start : (Signal.Address Action -> Box output) -> App output 
-start  unAddressedWidget =
+  in 
+    case children of 
+      [] -> Box newAddr leaf children 
+      xs -> Box newAddr leaf <| List.map updateChild children
+
+
+start : Box output -> App output 
+start box =
   let 
     mailbox = Signal.mailbox (Own JEnc.null)
-    (Box leaf children) = unAddressedWidget mailbox.address
-    init = (Box leaf children, [])
+    (Box address leaf children) = updateAddress mailbox.address box
+
+    init = (Box mailbox.address leaf children, [])
 
     next : Action -> (Box output, List Message) -> (Box output, List Message)
-    next a ((Box leaf children), msgs) = 
+    next a ((Box address leaf children), msgs) = 
       case a of 
         Own act -> 
           let 
             (state', msgs') = leaf.next act leaf.init 
           in 
-            (Box {leaf| init=state'} children, msgs')
+            (Box address {leaf| init=state'} children, msgs')
 
         Child cIdx act -> 
           let 
@@ -115,14 +132,14 @@ start  unAddressedWidget =
               else ((idx, box), [])
             (children', msgs') = List.unzip <| List.map update children
           in 
-            ((Box leaf children'), msgs++(List.concat msgs'))
+            ((Box address leaf children'), msgs++(List.concat msgs'))
 
     out = Signal.foldp next init mailbox.signal
 
-    view (Box leaf children) = 
+    view (Box address leaf children) = 
       case children of
-        [] -> leaf.view leaf.init []
-        xs -> leaf.view leaf.init (List.map view <| List.map snd children) 
+        [] -> leaf.view leaf.init [] address
+        xs -> leaf.view leaf.init (List.map view <| List.map snd children) address
 
   in 
     { output = Signal.map view <| Signal.map fst out
