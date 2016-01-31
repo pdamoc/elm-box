@@ -25,7 +25,7 @@ type alias BoxConfig action model output =
   , modelEncoder : (model -> JEnc.Value)
   }
 
-type Action = Own JEnc.Value | Child Int Action
+type Action = Own JEnc.Value | Child Int Action | AddChild | RemoveChild Int
 
 type alias ActionAddress = Signal.Address Action
 
@@ -134,6 +134,19 @@ start box =
           in 
             ((Box address leaf children'), msgs++(List.concat msgs'))
 
+        AddChild box -> 
+          let 
+            idx = List.length children
+            children' = children ++ [(idx, box)]
+          in
+            ((Box address leaf children'), msgs)
+        RemoveChild idx ->
+          let 
+            children' = List.filter (\(itemIdx, box) -> idx /= itemIdx) children
+          in
+            ((Box address leaf children'), msgs)
+           
+
     out = Signal.foldp next init mailbox.signal
 
     view (Box address leaf children) = 
@@ -145,3 +158,8 @@ start box =
     { output = Signal.map view <| Signal.map fst out
     , msgs = Signal.map (\(_, msgs)-> Task.sequence msgs) out
     }
+
+
+
+    
+  
