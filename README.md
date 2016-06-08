@@ -1,6 +1,5 @@
-# elm-box
-An exploration of an Alternative Elm Architecture
+# THIS IS DEPRECATED 
 
-To play with it, just start the `elm-reactor` in the root directory and navigate to 
+The code relies on 0.16 features and will not be updated. 
 
-[http://localhost:8000/examples/](http://localhost:8000/examples/)
+
