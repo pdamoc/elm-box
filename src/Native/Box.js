@@ -85,7 +85,7 @@ function define(impl){
             var comp = {};
             // var rootDiv = document.createElement('div')  
 
-            program(comp, "FirstComp", undefined);
+            program(comp);
             comp.embed(this)
             // this.appendChild(rootDiv)
 
