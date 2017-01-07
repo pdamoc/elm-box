@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Elm Components exploration",
-    "repository": "https://github.com/pdamoc/elm-box",
+    "repository": "https://github.com/pdamoc/elm-box.git",
     "license": "MPL2",
     "source-directories": [
         "src"
