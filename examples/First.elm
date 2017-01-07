@@ -5,7 +5,12 @@ import Box
 
 
 myComp =
-    Box.define { name = "x-hello", init = 0 }
+    Box.define
+        { name = "x-hello"
+        , css = """
+        x-hello button {color: #f00 }
+        """
+        }
 
 
 xHello =
