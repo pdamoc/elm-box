@@ -1,9 +1,37 @@
 module FirstMain exposing (..)
 
-import Html exposing (Html)
-import FirstComp exposing (auxFirst)
+import Html exposing (Html, div, program)
+import FirstComp exposing (..)
 
 
-main : Html msg
+main : Program Never Int Msg
 main =
-    auxFirst
+    program
+        { init = ( 0, Cmd.none )
+        , update = update
+        , view = view
+        , subscriptions = \_ -> Sub.none
+        }
+
+
+type alias Model =
+    Int
+
+
+type Msg
+    = NoOp
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+
+view : Model -> Html msg
+view model =
+    div []
+        [ auxFirst
+        , auxFirst
+        ]

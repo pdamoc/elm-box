@@ -1,5 +1,7 @@
-# THIS IS DEPRECATED 
+# THIS IS AN EXPLORATION (not working code) 
 
-The code relies on 0.16 features and will not be updated. 
+- `elm-package install` in `examples` folder 
 
+- `elm-make FirstMain.elm --output=elm.js`
 
+- open `First.html`

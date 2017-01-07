@@ -81,7 +81,14 @@ function define(impl){
         name: impl.name,
         
         constructor: function () {
-            this.textContent = 'Hello from JS! ';
+            var program = _elm_lang$virtual_dom$VirtualDom$program (impl)();
+            var comp = {};
+            // var rootDiv = document.createElement('div')  
+
+            program(comp, "FirstComp", undefined);
+            comp.embed(this)
+            // this.appendChild(rootDiv)
+
         }, 
         
         stylesheet : impl.css,
