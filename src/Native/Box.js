@@ -81,11 +81,10 @@ function define(impl){
         name: impl.name,
         
         constructor: function () {
-            var program = _elm_lang$virtual_dom$VirtualDom$program (impl)();
             var comp = {};
+            _elm_lang$virtual_dom$VirtualDom$program (impl)()(comp);
             // var rootDiv = document.createElement('div')  
 
-            program(comp);
             comp.embed(this)
             // this.appendChild(rootDiv)
 
