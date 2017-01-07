@@ -1,10 +1,11 @@
 {
     "version": "1.0.0",
-    "summary": "Elm Components exploration",
-    "repository": "https://github.com/pdamoc/elm-box",
-    "license": "MPL2",
+    "summary": "helpful summary of your project, less than 80 characters",
+    "repository": "https://github.com/pdamoc/elm-box.git",
+    "license": "BSD3",
     "source-directories": [
-        "src"
+        ".",
+        "../src"
     ],
     "exposed-modules": [],
     "native-modules": true,
