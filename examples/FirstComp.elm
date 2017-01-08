@@ -2,10 +2,10 @@ module FirstComp exposing (auxFirst)
 
 import Html exposing (..)
 import Html.Events exposing (..)
-import Box
+import Box exposing (Component)
 
 
-component : component
+component : Component
 component =
     Box.define
         { name = "aux-first"
