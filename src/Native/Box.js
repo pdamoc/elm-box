@@ -75,17 +75,19 @@ var DOMClass = (function (O,o) {
 
 }(Object, 0));
 
+
 function define(impl){
     var newClass = new DOMClass({
         
         name: impl.name,
         
-        constructor: function () {
+        constructor: function () { 
             var comp = {};
             _elm_lang$virtual_dom$VirtualDom$program (impl)()(comp);
             // var rootDiv = document.createElement('div')  
-
-            comp.embed(this)
+            
+            comp.embed(this);
+            
             // this.appendChild(rootDiv)
 
         }, 
