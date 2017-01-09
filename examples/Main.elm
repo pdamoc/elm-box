@@ -1,7 +1,7 @@
-module FirstMain exposing (..)
+module Main exposing (..)
 
 import Html exposing (Html, div, program)
-import FirstComp exposing (..)
+import LabeledInc
 
 
 main : Program Never Int Msg
@@ -32,6 +32,5 @@ update msg model =
 view : Model -> Html msg
 view model =
     div []
-        [ auxFirst
-        , auxFirst
+        [ LabeledInc.labeledInc [ LabeledInc.label "Counter: " ] []
         ]
