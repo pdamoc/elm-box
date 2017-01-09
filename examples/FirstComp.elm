@@ -9,7 +9,7 @@ component : Component
 component =
     Box.define
         { name = "aux-first"
-        , init = ( 0, Cmd.none )
+        , init = ( Model 0 "Count: ", Cmd.none )
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
@@ -24,17 +24,29 @@ auxFirst =
     node "aux-first" [] []
 
 
+type alias Model =
+    { value : Int
+    , label : String
+    }
+
+
 type Msg
     = Click
+    | UpdateLabel String
 
 
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case Debug.log "msg:" msg of
         Click ->
-            ( model + 1, Cmd.none )
+            ( { model | value = model.value + 1 }, Cmd.none )
+
+        UpdateLabel label ->
+            ( { model | label = label }, Cmd.none )
 
 
+view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Click ] [ text ("Inside Elm: " ++ (toString model)) ]
+        [ button [ onClick Click ] [ text (model.label ++ (toString model.value)) ]
         ]
