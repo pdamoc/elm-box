@@ -1,13 +1,13 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, program)
-import LabeledInc
+import Html exposing (Html, div, program, text)
+import LabeledInc exposing (..)
 
 
-main : Program Never Int Msg
+main : Program Never String Msg
 main =
     program
-        { init = ( 0, Cmd.none )
+        { init = ( "nothing set", Cmd.none )
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
@@ -15,22 +15,23 @@ main =
 
 
 type alias Model =
-    Int
+    String
 
 
 type Msg
-    = NoOp
+    = Inc Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        Inc value ->
+            ( toString value, Cmd.none )
 
 
-view : Model -> Html msg
+view : Model -> Html Msg
 view model =
     div []
-        [ LabeledInc.labeledInc [ LabeledInc.label "Counter: " ] []
+        [ labeledInc [ label "Counter: ", onInc Inc ] []
+        , div [] [ text model ]
         ]

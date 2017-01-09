@@ -1,7 +1,7 @@
-module LabeledInc exposing (labeledInc, label)
+module LabeledInc exposing (labeledInc, label, onInc)
 
 import Html exposing (..)
-import Html.Attributes exposing (attribute)
+import Html.Attributes exposing (attribute, name)
 import Html.Events exposing (..)
 import Box exposing (Component)
 
@@ -37,7 +37,13 @@ label =
     attribute "aux-label"
 
 
+onInc : (Int -> msg) -> Attribute msg
+onInc tagger =
+    name "tmp"
 
+
+
+-- placehoder for future code
 -- IMPLEMENTATION
 
 
