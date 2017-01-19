@@ -2,6 +2,6 @@
 
 - `elm-package install` in `examples` folder 
 
-- `elm-make FirstMain.elm --output=elm.js`
+- `elm-make Main.elm --output=elm.js`
 
-- open `First.html`
+- open `Test.html`

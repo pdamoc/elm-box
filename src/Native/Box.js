@@ -78,7 +78,23 @@ var DOMClass = (function (O,o) {
 var comps = {}
 
 function define(impl){
-     
+    function comp(node)
+    {
+      while (node.lastChild)
+      {
+        node.removeChild(node.lastChild);
+      }
+
+      return _elm_lang$core$Native_Platform.initializeWC(
+        node,
+        impl.init,
+        impl.update,
+        impl.subscriptions,
+        impl.input,
+        _elm_lang$virtual_dom$Native_VirtualDom.normalRenderer(node, impl.view)
+      );
+    };
+
     var newClass = new DOMClass({
         
         name: impl.name,
@@ -86,11 +102,10 @@ function define(impl){
         constructor: function () { 
             
             // var rootDiv = document.createElement('div')  
-            var comp = {};
-            _elm_lang$virtual_dom$VirtualDom$program (impl)()(comp);
-            comp.embed(this);
+
+            comp(this);
             // comp.embed(this);
-            console.log(comp)
+            // console.log(ret)
             // this.appendChild(rootDiv)
 
         }, 
@@ -98,7 +113,7 @@ function define(impl){
         stylesheet : impl.css,
 
         onChanged: function (name, prev, curr) {
-          console.log('changed', arguments);
+          this.send(name, curr);
         }
     });
 
