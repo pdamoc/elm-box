@@ -1,6 +1,7 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, program, text, br)
+import Html exposing (Html, div, program, text, br, button)
+import Html.Events exposing (onClick)
 import LabeledInc exposing (..)
 import RandomGif exposing (..)
 
@@ -8,7 +9,7 @@ import RandomGif exposing (..)
 main : Program Never Model Msg
 main =
     program
-        { init = ( Model 0 0, Cmd.none )
+        { init = ( Model 0 0 "dogs", Cmd.none )
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
@@ -18,12 +19,14 @@ main =
 type alias Model =
     { inc1 : Int
     , inc2 : Int
+    , topic : String
     }
 
 
 type Msg
     = IncOne Int
     | IncTwo Int
+    | SetTopic String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -35,6 +38,9 @@ update msg model =
         IncTwo value ->
             ( { model | inc2 = value }, Cmd.none )
 
+        SetTopic topic ->
+            ( { model | topic = topic }, Cmd.none )
+
 
 view : Model -> Html Msg
 view model =
@@ -45,5 +51,10 @@ view model =
         , labeledInc [ label "Counter: ", onInc IncTwo ] []
         , div [] [ text (toString model.inc2) ]
         , br [] []
-        , randomGif [] []
+        , div []
+            [ button [ onClick (SetTopic "dogs") ] [ text "Dogs" ]
+            , button [ onClick (SetTopic "sloths") ] [ text "Sloths" ]
+            , button [ onClick (SetTopic "cats") ] [ text "Cats" ]
+            ]
+        , randomGif [ topic model.topic ] []
         ]

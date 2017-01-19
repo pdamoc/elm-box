@@ -51,7 +51,7 @@ topic =
     attribute "elm-topic"
 
 
-{-| Event for when the component increments
+{-| Event for when the user clicks More
 -}
 onMore : msg -> Attribute msg
 onMore msg =

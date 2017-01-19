@@ -144,7 +144,7 @@ function initializeWC(node, init, update, subscriptions, input, renderer)
       enqueue(results.msg);
     }
   } 
-  
+
   var ports = _elm_lang$core$Native_Platform.setupEffects(managers, enqueue);
 
   return ports ? { ports: ports } : {};
@@ -153,7 +153,7 @@ function initializeWC(node, init, update, subscriptions, input, renderer)
 // REGISTERS THE COMPONENT
 
 function define(impl){
-    function comp(node)
+    function component(node)
     {
       while (node.lastChild)
       {
@@ -175,13 +175,8 @@ function define(impl){
         name: impl.name,
         
         constructor: function () { 
-            
-            // var rootDiv = document.createElement('div')  
-
-            comp(this);
-            // comp.embed(this);
-            // console.log(ret)
-            // this.appendChild(rootDiv)
+             
+            component(this); 
 
         }, 
         
