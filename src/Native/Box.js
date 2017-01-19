@@ -97,7 +97,7 @@ function initializeWC(node, init, update, subscriptions, input, renderer)
   {
     return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
       var results = A2(update, msg, model);
-      
+
       model = results._0;
       updateView(model);
       var cmds = results._1;
@@ -144,8 +144,10 @@ function initializeWC(node, init, update, subscriptions, input, renderer)
       enqueue(results.msg);
     }
   } 
+  
+  var ports = _elm_lang$core$Native_Platform.setupEffects(managers, enqueue);
 
-  return {};
+  return ports ? { ports: ports } : {};
 }
 
 // REGISTERS THE COMPONENT
