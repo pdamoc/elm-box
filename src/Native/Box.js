@@ -77,8 +77,23 @@ var DOMClass = (function (O,o) {
 
 // INITIALIZE A COMPONENT (lifted from Platform.js)
 
-function initializeWC(node, init, update, subscriptions, input, renderer)
+function initializeWC(node, impl)
 {
+
+  // cleanup
+  while (node.lastChild)
+  {
+    node.removeChild(node.lastChild);
+  }
+
+  var 
+    init = impl.init,
+    update = impl.update,
+    subscriptions = impl.subscriptions,
+    input = impl.input,
+    renderer = _elm_lang$virtual_dom$Native_VirtualDom.normalRenderer(node, impl.view)
+  
+
   // ambient state
   var managers = {};
   var updateView;
@@ -147,37 +162,17 @@ function initializeWC(node, init, update, subscriptions, input, renderer)
 
   var ports = _elm_lang$core$Native_Platform.setupEffects(managers, enqueue);
 
-  return ports ? { ports: ports } : {};
 }
 
 // REGISTERS THE COMPONENT
 
 function define(impl){
-    function component(node)
-    {
-      while (node.lastChild)
-      {
-        node.removeChild(node.lastChild);
-      }
-
-      return initializeWC(
-        node,
-        impl.init,
-        impl.update,
-        impl.subscriptions,
-        impl.input,
-        _elm_lang$virtual_dom$Native_VirtualDom.normalRenderer(node, impl.view)
-      );
-    };
-
     var newClass = new DOMClass({
         
         name: impl.name,
         
         constructor: function () { 
-             
-            component(this); 
-
+            initializeWC(this, impl); 
         }, 
         
         stylesheet : impl.css,
