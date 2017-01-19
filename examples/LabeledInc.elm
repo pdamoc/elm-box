@@ -82,7 +82,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd msg, Maybe ( String, Value ) )
 update msg model =
-    case Debug.log "msg:" msg of
+    case Debug.log "LabeledInc:" msg of
         Click ->
             ( { model | value = model.value + 1 }, Cmd.none, Just ( "inc", JE.int (model.value + 1) ) )
 

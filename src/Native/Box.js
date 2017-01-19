@@ -97,6 +97,7 @@ function initializeWC(node, init, update, subscriptions, input, renderer)
   {
     return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
       var results = A2(update, msg, model);
+      
       model = results._0;
       updateView(model);
       var cmds = results._1;
