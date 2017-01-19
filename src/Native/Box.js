@@ -75,7 +75,79 @@ var DOMClass = (function (O,o) {
 
 }(Object, 0));
 
-var comps = {}
+// INITIALIZE A COMPONENT (lifted from Platform.js)
+
+function initializeWC(node, init, update, subscriptions, input, renderer)
+{
+  // ambient state
+  var managers = {};
+  var updateView;
+
+  // init and update state in main process
+  var initApp = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
+    var model = init._0;
+    updateView = renderer(enqueue, model);
+    var cmds = init._1;
+    var subs = subscriptions(model);
+    _elm_lang$core$Native_Platform.dispatchEffects(managers, cmds, subs);
+    callback(_elm_lang$core$Native_Scheduler.succeed(model));
+  });
+
+  function onMessage(msg, model)
+  {
+    return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
+      var results = A2(update, msg, model);
+      model = results._0;
+      updateView(model);
+      var cmds = results._1;
+      var evts = results._2;
+      if (evts.ctor == "Just"){
+        var attr = evts._0._0;
+        var value = evts._0._1;
+        var event; // The custom event that will be created
+
+        if (document.createEvent) {
+          event = document.createEvent("HTMLEvents");
+          event.initEvent(attr, true, true);
+        } else {
+          event = document.createEventObject();
+          event.eventType = attr;
+        }
+
+        event.eventName = attr;
+        event.value = value; 
+        if (document.createEvent) {
+          node.dispatchEvent(event);
+        } else {
+          node.fireEvent("on" + event.eventType, event);
+        } 
+
+      };
+      var subs = subscriptions(model);
+      _elm_lang$core$Native_Platform.dispatchEffects(managers, cmds, subs);
+      callback(_elm_lang$core$Native_Scheduler.succeed(model));
+    });
+  }
+
+  var mainProcess = _elm_lang$core$Native_Platform.spawnLoop(initApp, onMessage);
+
+  function enqueue(msg)
+  {
+    _elm_lang$core$Native_Scheduler.rawSend(mainProcess, msg);
+  }
+
+  
+  node.send = function(name, value){
+    var results = A2(input, name, value);
+    if (results.tag == "succeed"){
+      enqueue(results.msg);
+    }
+  } 
+
+  return {};
+}
+
+// REGISTERS THE COMPONENT
 
 function define(impl){
     function comp(node)
@@ -85,7 +157,7 @@ function define(impl){
         node.removeChild(node.lastChild);
       }
 
-      return _elm_lang$core$Native_Platform.initializeWC(
+      return initializeWC(
         node,
         impl.init,
         impl.update,
