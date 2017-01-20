@@ -3,7 +3,7 @@ module LabeledInc exposing (labeledInc, label, value, onInc)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, name)
 import Html.Events exposing (..)
-import Box exposing (Component)
+import Box exposing (Box)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
 
@@ -11,12 +11,17 @@ import Json.Decode as Json exposing (Decoder)
 -- WIRING
 
 
-{-| Defines the component
+boxName : String
+boxName =
+    "aux-labeled-inc"
+
+
+{-| Defines the box
 -}
-component : Component
-component =
+box : Box
+box =
     Box.define
-        { name = "aux-labeled-inc"
+        { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
         , update = update
@@ -36,7 +41,7 @@ component =
 -}
 labeledInc : List (Attribute msg) -> List (Html msg) -> Html msg
 labeledInc =
-    node "aux-labeled-inc"
+    node boxName
 
 
 {-| attribute for setting the label of the component

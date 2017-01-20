@@ -3,7 +3,7 @@ module RandomGif exposing (randomGif, topic, onMore)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, style)
 import Html.Events exposing (..)
-import Box exposing (Component)
+import Box exposing (Box)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
 import Http
@@ -12,17 +12,17 @@ import Http
 -- WIRING
 
 
-name : String
-name =
+boxName : String
+boxName =
     "elm-random-gif"
 
 
-{-| Defines the component
+{-| Defines the box
 -}
-component : Component
-component =
+box : Box
+box =
     Box.define
-        { name = name
+        { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
         , update = update
@@ -43,14 +43,14 @@ elm-random-gif div {
 
 
 
--- INTERFACE FOR THE COMPONENT
+-- INTERFACE FOR THE BOX
 
 
 {-| the Html node that ends up being used
 -}
 randomGif : List (Attribute msg) -> List (Html msg) -> Html msg
 randomGif =
-    node name
+    node boxName
 
 
 {-| attribute for setting the topic of the component

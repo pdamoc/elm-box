@@ -3,7 +3,7 @@ module CounterWithRemove exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, class, style)
 import Html.Events exposing (..)
-import Box exposing (Component)
+import Box exposing (Box)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
 
@@ -11,12 +11,17 @@ import Json.Decode as Json exposing (Decoder)
 -- WIRING
 
 
+boxName : String
+boxName =
+    "elm-counter-with-remove"
+
+
 {-| Defines the component
 -}
-component : Component
+component : Box
 component =
     Box.define
-        { name = "elm-counter-with-remove"
+        { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
         , update = update
@@ -41,7 +46,12 @@ elm-counter-with-remove .container {
     margin: 5px;
     border-radius: 16px!important;
     border: 1px solid #ccc!important;
-    display: inline-block;
+    background-color: #eee;
+    display: inline-flex;
+    flex-direction: row;
+}
+elm-counter-with-remove button {
+    margin: 5px;
 }
 """
 
@@ -54,7 +64,7 @@ elm-counter-with-remove .container {
 -}
 counterWithRemove : List (Attribute msg) -> List (Html msg) -> Html msg
 counterWithRemove =
-    node "elm-counter-with-remove"
+    node boxName
 
 
 {-| attribute for setting the value of the counter

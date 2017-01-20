@@ -21,4 +21,5 @@ if not "normalRenderer:normalRenderer" in vdomCont:
     vdomCont = vdomCont.replace("keyedNode: F3(keyedNode),", "keyedNode: F3(keyedNode),\n\tnormalRenderer:normalRenderer,")
     with open(vdom, "w") as f:
         f.write(vdomCont)
-         
+
+print "core files PATCHED!"

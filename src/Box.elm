@@ -1,9 +1,9 @@
-module Box exposing (Component, define)
+module Box exposing (Box, define)
 
-{-| Utility functions to define your own Web Components in Elm.
+{-| Helper to define pseudo-web-components
 
 # Types
-@docs Component
+@docs Box
 
 # Functions
 @docs define
@@ -18,21 +18,21 @@ import Json.Decode exposing (Decoder)
 --
 
 
-{-| Opaque Component type
+{-| Opaque Box type
 -}
-type Component
-    = Component
+type Box
+    = Box
 
 
-{-| Define a Component
+{-| Define a Box
 
-This definition has the side effect of registering the component
+This definition has the side effect of registering the `custom element`
 
 The fiels are:
-    - `name` : the name of the component.
+    - `name` : the name of the `custom element`.
     - `attributeDecoder` : a function that receives a name and a value for the attributes
      that have been given or have been updated and returns a decoder that converts
-     the values into a message that the component will receive in its update.
+     the values into a message that the `custom element` will receive in its `update`.
     - `init` : a function that receives a list with all the messages obtained from
     decoding the attributes with the `attributeDecoder` and returns the initial
     model and Cmd (just like in the regular TEA `init`).
@@ -41,8 +41,8 @@ The fiels are:
     The String is the name of the event, the Value is the payload.
     - `subscription`: standard TEA `subscription`
     - `view`: standard TEA `view`
-    - `css` : a String containing the CSS for the component. Please make sure to
-    use the `name` of the component as a selector for each internal rule.
+    - `css` : a String containing the CSS for the `custom element`. Please make sure to
+    use the `name` of the `custom element` as a selector for each internal rule.
     (e.g. "my-app button { color: #f00 }" where "my-app" is the `name`)
 -}
 define :
@@ -54,6 +54,6 @@ define :
     , view : model -> Html msg
     , css : String
     }
-    -> Component
+    -> Box
 define =
     Native.Box.define

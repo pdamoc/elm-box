@@ -7,7 +7,7 @@ import LabeledInc exposing (..)
 import RandomGif exposing (..)
 import Json.Decode as Json exposing (Decoder)
 import Json.Encode exposing (Value)
-import Box exposing (Component)
+import Box exposing (Box)
 
 
 name : String
@@ -15,10 +15,10 @@ name =
     "main-app"
 
 
-{-| Defines the component
+{-| Defines the box
 -}
-component : Component
-component =
+box : Box
+box =
     Box.define
         { name = name
         , attributeDecoder = attributeDecoder
@@ -32,7 +32,7 @@ component =
         }
 
 
-{-| a decoder that helps feed the arguments back into the component as messages
+{-| a decoder that helps feed the arguments back into the box as messages
 -}
 attributeDecoder : String -> String -> Decoder Msg
 attributeDecoder name value =

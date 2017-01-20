@@ -3,7 +3,7 @@ module Counter exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, class, style)
 import Html.Events exposing (..)
-import Box exposing (Component)
+import Box exposing (Box)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
 
@@ -11,12 +11,17 @@ import Json.Decode as Json exposing (Decoder)
 -- WIRING
 
 
-{-| Defines the component
+boxName : String
+boxName =
+    "elm-counter"
+
+
+{-| Defines the box
 -}
-component : Component
-component =
+box : Box
+box =
     Box.define
-        { name = "elm-counter"
+        { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
         , update = update
@@ -60,7 +65,7 @@ elm-counter button {
 -}
 counter : List (Attribute msg) -> List (Html msg) -> Html msg
 counter =
-    node "elm-counter"
+    node boxName
 
 
 {-| attribute for setting the value of the counter

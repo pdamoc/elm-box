@@ -45,6 +45,7 @@ update message model =
 -- VIEW
 
 
+(=>) : a -> b -> ( a, b )
 (=>) =
     (,)
 

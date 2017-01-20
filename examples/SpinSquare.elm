@@ -7,24 +7,24 @@ import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick)
 import Time exposing (Time, second)
 import AnimationFrame
-import Box exposing (Component)
+import Box exposing (Box)
 import Json.Decode as Json
 
 
 -- COMPONENT
 
 
-name : String
-name =
+boxName : String
+boxName =
     "spin-square"
 
 
-{-| Defines the component
+{-| Defines the box
 -}
-component : Component
-component =
+box : Box
+box =
     Box.define
-        { name = name
+        { name = boxName
         , attributeDecoder = \_ _ -> Json.fail ""
         , init = \_ -> ( init, Cmd.none )
         , update = \m mdl -> ( update m mdl, Cmd.none, Nothing )
@@ -46,7 +46,7 @@ spin-square div {
 
 spinSquare : List (Html.Attribute msg) -> List (Html msg) -> Html msg
 spinSquare =
-    node name
+    node boxName
 
 
 
