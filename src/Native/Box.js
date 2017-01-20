@@ -78,10 +78,6 @@ var DOMClass = (function (O,o) {
 
 // INITIALIZE A COMPONENT (lifted from Platform.js)
 
-function camelCase(str){
-  return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
-}
-
 function initializeWC(node, impl)
 {
 

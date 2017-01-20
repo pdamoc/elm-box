@@ -27,7 +27,7 @@ component =
         , view = view
         , subscriptions = \_ -> Sub.none
         , css = """
-        #blue button {color: #00f!important }
+        #blue button {color: #00f }
         """
         }
 
