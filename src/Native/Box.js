@@ -1,81 +1,5 @@
 var _pdamoc$elm_box$Native_Box = function()
 {
-
-var DOMClass = (function (O,o) {
-
-  /*! (C) Andrea Giammarchi */
-
-  var
-    create = O.create,
-    css = create(null),
-    dP = O.defineProperty,
-    gOPD = O.getOwnPropertyDescriptor,
-    gOPN = O.getOwnPropertyNames,
-    gOPS = O.getOwnPropertySymbols,
-    ownKeys = gOPS ?
-      function (object) {
-        return gOPN(object).concat(gOPS(object));
-      } :
-      gOPN,
-    loadCSS = function (document, css) {
-      
-      var style = document.createElement('style');
-        style.type  = 'text/css';
-        style.textContent  = css;
-        document.head.insertBefore(style, document.head.lastChild);
-       
-      return true;
-    }
-  ;
-
-  return function DOMClass(description) {
-    for (var
-      k, name, xtends,
-      constructor,
-      stylesheet,
-      descriptors = {},
-      keys = ownKeys(description),
-      set = function (s) {
-        dP(descriptors, s, {
-          enumerable: true,
-          writable: true,
-          value: gOPD(description, k)
-        }); 
-      },
-      i = 0; i < keys.length; i++
-    ) {
-      k = keys[i];
-      switch (k.toLowerCase()) {
-        case 'name': name = description[k]; break;
-        case 'stylesheet': stylesheet = description[k]; break;
-        case 'extends':
-          xtends = typeof description[k] === 'function' ?
-            description[k].prototype : description[k];
-          break;
-        case 'constructor': constructor = description[k];
-                            set('createdCallback');           break;
-        case 'onattached':  set('attachedCallback');          break;
-        case 'onchanged':   set('attributeChangedCallback');  break;
-        case 'ondetached':  set('detachedCallback');          break;
-        default: set(k); break;
-      }
-    }
-    if (stylesheet) {
-      descriptors.createdCallback.value = function () {
-        if (!(name in css))
-          loadCSS(this.ownerDocument || document, stylesheet);
-          css[name] = true
-        if (constructor) constructor.apply(this, arguments);
-      };
-    }
-    return document.registerElement(
-      name || ('zero-dom-class-'+ ++o),
-      {prototype: create(xtends || HTMLElement.prototype, descriptors)}
-    );
-  };
-
-}(Object, 0));
-
 // INITIALIZE A COMPONENT (lifted from Platform.js)
 
 function initializeWC(node, impl)
@@ -169,6 +93,7 @@ function initializeWC(node, impl)
   
   node.send = function(name, value){
     var results = A2(attributeDecoder, name, value);
+    
     if (results.tag == "succeed"){
       enqueue(results.msg);
     }
@@ -179,24 +104,34 @@ function initializeWC(node, impl)
 }
 
 // REGISTERS THE COMPONENT
+var css = Object.create(null);
+
+function loadCSS(document, css) {    
+  var style = document.createElement('style');
+    style.type  = 'text/css';
+    style.textContent  = css;
+    document.head.insertBefore(style, document.head.lastChild);
+}
 
 function define(impl){
-    var newClass = new DOMClass({
-        
-        name: impl.name,
-        
-        constructor: function () { 
-            initializeWC(this, impl); 
-        }, 
-        
-        stylesheet : impl.css,
+  var proto = Object.create(HTMLElement.prototype);
 
-        onChanged: function (name, prev, curr) {
-          this.send(name, curr);
-        }
-    });
+  proto.createdCallback = function(){
+    initializeWC(this, impl); 
+    if (!(impl.name in css)){
+      loadCSS(this.ownerDocument || document, impl.css);
+      css[impl.name] = true 
+    };
+  };
 
-    return true;
+
+  proto.attributeChangedCallback = function (name, prev, curr) {
+    console.log("attributeChangedCallback", name, curr)
+    this.send(name, curr);
+  };
+  
+  document.registerElement(impl.name, { prototype:proto });
+    
 }
 
 return {
