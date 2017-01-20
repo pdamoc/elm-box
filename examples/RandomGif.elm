@@ -3,7 +3,7 @@ module RandomGif exposing (randomGif, topic, onMore)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, style)
 import Html.Events exposing (..)
-import Box exposing (Box)
+import Box exposing (..)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
 import Http
@@ -109,23 +109,23 @@ type Msg
     | ChangeTopic String
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe ( String, Value ) )
+update : Msg -> Model -> ( Model, Cmd Msg, Event )
 update msg model =
     case Debug.log "RandomGif:" msg of
         MorePlease ->
-            ( model, getRandomGif model.topic, Just ( "more", JE.null ) )
+            ( model, getRandomGif model.topic, event "more" JE.null )
 
         FetchSucceed newUrl ->
-            ( Model model.topic newUrl, Cmd.none, Nothing )
+            ( Model model.topic newUrl, Cmd.none, noEvent )
 
         FetchFail ->
-            ( model, Cmd.none, Nothing )
+            ( model, Cmd.none, noEvent )
 
         ChangeTopic topic ->
             if topic /= model.topic then
-                ( { model | topic = topic }, getRandomGif topic, Nothing )
+                ( { model | topic = topic }, getRandomGif topic, noEvent )
             else
-                ( model, Cmd.none, Nothing )
+                ( model, Cmd.none, noEvent )
 
 
 

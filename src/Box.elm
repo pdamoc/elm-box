@@ -1,12 +1,12 @@
-module Box exposing (Box, define)
+module Box exposing (Box, Event, define, event, noEvent)
 
 {-| Helper to define pseudo-web-components
 
 # Types
-@docs Box
+@docs Box, Event
 
 # Functions
-@docs define
+@docs define, event, noEvent
 -}
 
 import Native.Box
@@ -36,8 +36,8 @@ The fiels are:
     - `init` : a function that receives a list with all the messages obtained from
     decoding the attributes with the `attributeDecoder` and returns the initial
     model and Cmd (just like in the regular TEA `init`).
-    - `update` : similar to the regular update only that it also returns a
-    Maybe ( String, Value ) that describes a potential event to be generated.
+    - `update` : similar to the regular update only that it also returns an
+    `Event` that describes a potential event to be generated.
     The String is the name of the event, the Value is the payload.
     - `subscription`: standard TEA `subscription`
     - `view`: standard TEA `view`
@@ -49,7 +49,7 @@ define :
     { name : String
     , attributeDecoder : String -> String -> Decoder msg
     , init : List msg -> ( model, Cmd msg )
-    , update : msg -> model -> ( model, Cmd msg, Maybe ( String, Value ) )
+    , update : msg -> model -> ( model, Cmd msg, Event )
     , subscriptions : model -> Sub msg
     , view : model -> Html msg
     , css : String
@@ -57,3 +57,24 @@ define :
     -> Box
 define =
     Native.Box.define
+
+
+{-| A type for outward Events
+-}
+type alias Event =
+    Maybe ( String, Value )
+
+
+{-| Receives the name of the event and a payload. It will generate an event
+with the provided name where the payload is in the `value` property of the event.
+-}
+event : String -> Value -> Event
+event name payload =
+    Just ( name, payload )
+
+
+{-| for when no event is generated
+-}
+noEvent : Event
+noEvent =
+    Nothing

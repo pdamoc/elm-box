@@ -7,7 +7,7 @@ import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick)
 import Time exposing (Time, second)
 import AnimationFrame
-import Box exposing (Box)
+import Box exposing (..)
 import Json.Decode as Json
 
 
@@ -27,7 +27,7 @@ box =
         { name = boxName
         , attributeDecoder = \_ _ -> Json.fail ""
         , init = \_ -> ( init, Cmd.none )
-        , update = \m mdl -> ( update m mdl, Cmd.none, Nothing )
+        , update = \m mdl -> ( update m mdl, Cmd.none, noEvent )
         , view = view
         , subscriptions = subscriptions
         , css = css

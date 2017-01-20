@@ -3,7 +3,7 @@ module Counter exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, class, style)
 import Html.Events exposing (..)
-import Box exposing (Box)
+import Box exposing (..)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
 
@@ -126,7 +126,7 @@ type Msg
     | UpdateValue Int
 
 
-update : Msg -> Model -> ( Model, Cmd msg, Maybe ( String, Value ) )
+update : Msg -> Model -> ( Model, Cmd msg, Event )
 update msg model =
     case msg of
         Increment ->
@@ -137,9 +137,9 @@ update msg model =
 
         UpdateValue val ->
             if model == val then
-                ( model, Cmd.none, Nothing )
+                ( model, Cmd.none, noEvent )
             else
-                ( val, Cmd.none, Just ( "counter-update", JE.int val ) )
+                ( val, Cmd.none, event "counter-update" (JE.int val) )
 
 
 view : Model -> Html Msg

@@ -3,7 +3,7 @@ module LabeledInc exposing (labeledInc, label, value, onInc)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, name)
 import Html.Events exposing (..)
-import Box exposing (Box)
+import Box exposing (..)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
 
@@ -114,17 +114,17 @@ type Msg
     | UpdateValue Int
 
 
-update : Msg -> Model -> ( Model, Cmd msg, Maybe ( String, Value ) )
+update : Msg -> Model -> ( Model, Cmd msg, Event )
 update msg model =
-    case Debug.log "LabeledInc:" msg of
+    case msg of
         Click ->
-            ( { model | value = model.value + 1 }, Cmd.none, Just ( "inc", JE.int (model.value + 1) ) )
+            ( { model | value = model.value + 1 }, Cmd.none, event "inc" (JE.int (model.value + 1)) )
 
         UpdateLabel label ->
-            ( { model | label = label }, Cmd.none, Nothing )
+            ( { model | label = label }, Cmd.none, noEvent )
 
         UpdateValue val ->
-            ( { model | value = val }, Cmd.none, Nothing )
+            ( { model | value = val }, Cmd.none, noEvent )
 
 
 view : Model -> Html Msg

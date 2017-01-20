@@ -6,8 +6,7 @@ import Html.Events exposing (onClick)
 import LabeledInc exposing (..)
 import RandomGif exposing (..)
 import Json.Decode as Json exposing (Decoder)
-import Json.Encode exposing (Value)
-import Box exposing (Box)
+import Box exposing (Box, Event, event, noEvent)
 
 
 name : String
@@ -94,17 +93,17 @@ type Msg
     | SetTopic String
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe ( String, Value ) )
+update : Msg -> Model -> ( Model, Cmd Msg, Event )
 update msg model =
-    case Debug.log "main-app" msg of
+    case msg of
         IncOne value ->
-            ( { model | inc1 = value }, Cmd.none, Nothing )
+            ( { model | inc1 = value }, Cmd.none, noEvent )
 
         IncTwo value ->
-            ( { model | inc2 = value }, Cmd.none, Nothing )
+            ( { model | inc2 = value }, Cmd.none, noEvent )
 
         SetTopic topic ->
-            ( { model | topic = topic }, Cmd.none, Nothing )
+            ( { model | topic = topic }, Cmd.none, noEvent )
 
 
 view : Model -> Html Msg
