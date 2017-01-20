@@ -36,7 +36,7 @@ css : String
 css =
     """
 elm-random-gif div {
-    float: left;
+    display: inline-block;
     margin: 10px;
 }
 """
@@ -122,7 +122,10 @@ update msg model =
             ( model, Cmd.none, Nothing )
 
         ChangeTopic topic ->
-            ( { model | topic = topic }, getRandomGif topic, Nothing )
+            if topic /= model.topic then
+                ( { model | topic = topic }, getRandomGif topic, Nothing )
+            else
+                ( model, Cmd.none, Nothing )
 
 
 
@@ -192,7 +195,4 @@ decodeGifUrl =
 
 main : Html msg
 main =
-    div []
-        [ randomGif [ topic "cats" ] []
-        , randomGif [ topic "dogs" ] []
-        ]
+    randomGif [ topic "sloths" ] []

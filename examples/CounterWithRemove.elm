@@ -1,4 +1,4 @@
-module Counter exposing (..)
+module CounterWithRemove exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (attribute, class, style)
@@ -16,7 +16,7 @@ import Json.Decode as Json exposing (Decoder)
 component : Component
 component =
     Box.define
-        { name = "elm-counter"
+        { name = "elm-counter-with-remove"
         , attributeDecoder = attributeDecoder
         , init = init
         , update = update
@@ -29,14 +29,14 @@ component =
 css : String
 css =
     """
-elm-counter .label {
+elm-counter-with-remove .label {
     font-size: 20px;
     font-family: monospace;
     display: inline-block;
     width: 50px;
     text-align: center;
 }
-elm-counter .container {
+elm-counter-with-remove .container {
     padding: 5px;
     margin: 5px;
     border-radius: 16px!important;
@@ -52,9 +52,9 @@ elm-counter .container {
 
 {-| the Html node that ends up being used
 -}
-counter : List (Attribute msg) -> List (Html msg) -> Html msg
-counter =
-    node "elm-counter"
+counterWithRemove : List (Attribute msg) -> List (Html msg) -> Html msg
+counterWithRemove =
+    node "elm-counter-with-remove"
 
 
 {-| attribute for setting the value of the counter
@@ -69,6 +69,13 @@ value val =
 onCounterUpdate : (Int -> msg) -> Attribute msg
 onCounterUpdate tagger =
     on "counter-update" (Json.map tagger (Json.field "value" Json.int))
+
+
+{-| Event for when the counter remove button is clicked
+-}
+onRemove : msg -> Attribute msg
+onRemove msg =
+    on "counter-remove" (Json.succeed msg)
 
 
 {-| a decoder that helps feed the arguments back into the component as messages
@@ -113,6 +120,7 @@ type Msg
     = Increment
     | Decrement
     | UpdateValue Int
+    | Remove
 
 
 update : Msg -> Model -> ( Model, Cmd msg, Maybe ( String, Value ) )
@@ -130,6 +138,9 @@ update msg model =
             else
                 ( val, Cmd.none, Just ( "counter-update", JE.int val ) )
 
+        Remove ->
+            ( model, Cmd.none, Just ( "counter-remove", JE.null ) )
+
 
 view : Model -> Html Msg
 view model =
@@ -137,9 +148,10 @@ view model =
         [ button [ onClick Decrement ] [ text "-" ]
         , div [ class "label" ] [ text (toString model) ]
         , button [ onClick Increment ] [ text "+" ]
+        , button [ onClick Remove ] [ text "x" ]
         ]
 
 
 main : Html msg
 main =
-    counter [] []
+    counterWithRemove [] []
