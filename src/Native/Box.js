@@ -126,7 +126,6 @@ function define(impl){
 
 
   proto.attributeChangedCallback = function (name, prev, curr) {
-    console.log("attributeChangedCallback", name, curr)
     this.send(name, curr);
   };
   
