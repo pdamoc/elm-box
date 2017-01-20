@@ -41,8 +41,14 @@ elm-counter .container {
     margin: 5px;
     border-radius: 16px!important;
     border: 1px solid #ccc!important;
-    display: inline-block;
+    background-color: #eee;
+    display: inline-flex;
+    flex-direction: row;
 }
+elm-counter button {
+    margin: 5px;
+}
+
 """
 
 
