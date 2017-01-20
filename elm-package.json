@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "summary": "Elm Components exploration",
+    "summary": "Infrastructure for defining pseudo Web Components in Elm",
     "repository": "https://github.com/pdamoc/elm-box.git",
     "license": "MPL2",
     "source-directories": [
