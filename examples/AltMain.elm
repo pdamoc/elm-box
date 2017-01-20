@@ -20,7 +20,7 @@ component : Component
 component =
     Box.define
         { name = name
-        , init = ( Model 0 0 "dogs", Cmd.none )
+        , init = \_ -> ( Model 0 0 "dogs", Cmd.none )
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none

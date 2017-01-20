@@ -23,7 +23,7 @@ component : Component
 component =
     Box.define
         { name = name
-        , init = init
+        , init = \_ -> init
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none

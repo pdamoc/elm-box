@@ -40,7 +40,7 @@ var DOMClass = (function (O,o) {
           enumerable: true,
           writable: true,
           value: gOPD(description, k)
-        });
+        }); 
       },
       i = 0; i < keys.length; i++
     ) {
@@ -77,6 +77,10 @@ var DOMClass = (function (O,o) {
 
 // INITIALIZE A COMPONENT (lifted from Platform.js)
 
+function camelCase(str){
+  return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+}
+
 function initializeWC(node, impl)
 {
 
@@ -91,8 +95,18 @@ function initializeWC(node, impl)
     update = impl.update,
     subscriptions = impl.subscriptions,
     input = impl.input,
-    renderer = _elm_lang$virtual_dom$Native_VirtualDom.normalRenderer(node, impl.view)
-  
+    renderer = _elm_lang$virtual_dom$Native_VirtualDom.normalRenderer(node, impl.view), 
+    attrs = node.attributes,
+    flags = _elm_lang$core$Native_List.Nil 
+      
+    for (var i = attrs.length; i--; )
+    { 
+      flags = _elm_lang$core$Native_List.Cons(_elm_lang$core$Native_Utils.Tuple2(attrs[i].name, attrs[i].value), flags);
+    }
+
+   
+
+  init =  init( flags)  
 
   // ambient state
   var managers = {};
@@ -179,6 +193,7 @@ function define(impl){
 
         onChanged: function (name, prev, curr) {
           this.send(name, curr);
+          console.log(name, prev, curr)
         }
     });
 

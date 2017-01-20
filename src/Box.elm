@@ -30,7 +30,7 @@ This definition has the side effect of registering the component
 -}
 define :
     { name : String
-    , init : ( model, Cmd msg )
+    , init : List ( String, String ) -> ( model, Cmd msg )
     , update : msg -> model -> ( model, Cmd msg, Maybe ( String, Value ) )
     , subscriptions : model -> Sub msg
     , input : String -> String -> Decoder msg

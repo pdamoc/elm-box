@@ -17,7 +17,7 @@ component : Component
 component =
     Box.define
         { name = "aux-labeled-inc"
-        , init = ( Model 0 "Count: ", Cmd.none )
+        , init = init
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
@@ -73,6 +73,31 @@ type alias Model =
     { value : Int
     , label : String
     }
+
+
+init : List ( String, String ) -> ( Model, Cmd Msg )
+init attrs =
+    let
+        updateAttributes ( key, val ) ( model, cmds ) =
+            case key of
+                "aux-label" ->
+                    ( { model | label = val }, cmds )
+
+                "value" ->
+                    case Json.decodeString Json.int val of
+                        Ok value ->
+                            ( { model | value = value }, cmds )
+
+                        Err _ ->
+                            ( model, cmds )
+
+                _ ->
+                    ( model, cmds )
+
+        log =
+            Debug.log "attr:" attrs
+    in
+        List.foldr updateAttributes ( Model 0 "Count: ", Cmd.none ) attrs
 
 
 type Msg
