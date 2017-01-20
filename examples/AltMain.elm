@@ -6,7 +6,7 @@ import Html.Events exposing (onClick)
 import LabeledInc exposing (..)
 import RandomGif exposing (..)
 import Json.Decode as Json exposing (Decoder)
-import Box exposing (Box, Event, event, noEvent)
+import Box exposing (..)
 
 
 name : String
@@ -78,11 +78,7 @@ init : List Msg -> ( Model, Cmd Msg )
 init attrs =
     let
         updateAttributes msg ( model, cmds ) =
-            let
-                ( newModel, cmd, _ ) =
-                    update msg model
-            in
-                ( newModel, cmd )
+            update msg model
     in
         List.foldr updateAttributes ( Model 0 0 "dogs", Cmd.none ) attrs
 
@@ -93,17 +89,17 @@ type Msg
     | SetTopic String
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Event )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         IncOne value ->
-            ( { model | inc1 = value }, Cmd.none, noEvent )
+            ( { model | inc1 = value }, Cmd.none )
 
         IncTwo value ->
-            ( { model | inc2 = value }, Cmd.none, noEvent )
+            ( { model | inc2 = value }, Cmd.none )
 
         SetTopic topic ->
-            ( { model | topic = topic }, Cmd.none, noEvent )
+            ( { model | topic = topic }, Cmd.none )
 
 
 view : Model -> Html Msg

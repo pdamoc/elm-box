@@ -1,7 +1,59 @@
 var _pdamoc$elm_box$Native_Box = function()
 {
-// INITIALIZE A COMPONENT (lifted from Platform.js)
 
+function gatherEvents(bag, eventList)
+{
+  switch (bag.type)
+  {
+    case 'event':
+      eventList.push(bag);
+      return;
+
+    case 'leaf':
+      return;
+
+    case 'node':
+      var list = bag.branches;
+      while (list.ctor !== '[]')
+      {
+        gatherEvents(list._0, eventList);
+        list = list._1;
+      }
+      return;
+
+    case 'map':
+      gatherEvents(bag.tree, eventList);
+      return;
+  }
+}
+
+
+function generateEvent(node, cmds){
+
+  var evts = [];
+  gatherEvents(cmds, evts);
+  for (var idx in evts){
+    var evtInfo = evts[idx]; 
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent("HTMLEvents");
+      event.initEvent(evtInfo.name, true, true);
+    } else {
+      event = document.createEventObject();
+      event.eventType = evtInfo.name;
+    }
+
+    event.eventName = evtInfo.name;
+    event.value = evtInfo.payload; 
+    if (document.createEvent) {
+      node.dispatchEvent(event);
+    } else {
+      node.fireEvent("on" + event.eventType, event);
+    } 
+  }
+}
+
+// INITIALIZE A COMPONENT (lifted from Platform.js)
 function initializeWC(node, impl)
 {
 
@@ -54,29 +106,7 @@ function initializeWC(node, impl)
       model = results._0;
       updateView(model);
       var cmds = results._1;
-      var evts = results._2;
-      if (evts.ctor == "Just"){
-        var attr = evts._0._0;
-        var value = evts._0._1;
-        var event; // The custom event that will be created
-
-        if (document.createEvent) {
-          event = document.createEvent("HTMLEvents");
-          event.initEvent(attr, true, true);
-        } else {
-          event = document.createEventObject();
-          event.eventType = attr;
-        }
-
-        event.eventName = attr;
-        event.value = value; 
-        if (document.createEvent) {
-          node.dispatchEvent(event);
-        } else {
-          node.fireEvent("on" + event.eventType, event);
-        } 
-
-      };
+      generateEvent(node, cmds);
       var subs = subscriptions(model);
       _elm_lang$core$Native_Platform.dispatchEffects(managers, cmds, subs);
       callback(_elm_lang$core$Native_Scheduler.succeed(model));
@@ -133,8 +163,17 @@ function define(impl){
     
 }
 
+function event(name, payload){
+  return {
+    type: 'event',
+    name: name,
+    payload: payload
+  };
+}
+
 return {
-    define: define
+    define: define,
+    event: F2(event)
 };
 
 }();

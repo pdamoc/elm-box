@@ -99,11 +99,7 @@ init : List Msg -> ( Model, Cmd Msg )
 init attrs =
     let
         updateAttributes msg ( model, cmds ) =
-            let
-                ( newModel, cmd, _ ) =
-                    update msg model
-            in
-                ( newModel, cmd )
+            update msg model
     in
         List.foldr updateAttributes ( Model 0 "Count: ", Cmd.none ) attrs
 
@@ -114,17 +110,17 @@ type Msg
     | UpdateValue Int
 
 
-update : Msg -> Model -> ( Model, Cmd msg, Event )
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
         Click ->
-            ( { model | value = model.value + 1 }, Cmd.none, event "inc" (JE.int (model.value + 1)) )
+            ( { model | value = model.value + 1 }, event "inc" (JE.int (model.value + 1)) )
 
         UpdateLabel label ->
-            ( { model | label = label }, Cmd.none, noEvent )
+            ( { model | label = label }, Cmd.none )
 
         UpdateValue val ->
-            ( { model | value = val }, Cmd.none, noEvent )
+            ( { model | value = val }, Cmd.none )
 
 
 view : Model -> Html Msg

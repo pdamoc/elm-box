@@ -93,11 +93,7 @@ init : List Msg -> ( Model, Cmd Msg )
 init attrs =
     let
         updateAttributes msg ( model, cmds ) =
-            let
-                ( newModel, cmd, _ ) =
-                    update msg model
-            in
-                ( newModel, cmd )
+            update msg model
     in
         List.foldr updateAttributes ( Model "cats" "assets/waiting.gif", getRandomGif "cats" ) attrs
 
@@ -109,23 +105,23 @@ type Msg
     | ChangeTopic String
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Event )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log "RandomGif:" msg of
+    case msg of
         MorePlease ->
-            ( model, getRandomGif model.topic, event "more" JE.null )
+            ( model, Cmd.batch [ getRandomGif model.topic, event "more" JE.null ] )
 
         FetchSucceed newUrl ->
-            ( Model model.topic newUrl, Cmd.none, noEvent )
+            ( Model model.topic newUrl, Cmd.none )
 
         FetchFail ->
-            ( model, Cmd.none, noEvent )
+            ( model, Cmd.none )
 
         ChangeTopic topic ->
             if topic /= model.topic then
-                ( { model | topic = topic }, getRandomGif topic, noEvent )
+                ( { model | topic = topic }, getRandomGif topic )
             else
-                ( model, Cmd.none, noEvent )
+                ( model, Cmd.none )
 
 
 

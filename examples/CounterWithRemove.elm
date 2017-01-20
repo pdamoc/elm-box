@@ -117,11 +117,7 @@ init : List Msg -> ( Model, Cmd Msg )
 init attrs =
     let
         updateAttributes msg ( model, cmds ) =
-            let
-                ( newModel, cmd, _ ) =
-                    update msg model
-            in
-                ( newModel, cmd )
+            update msg model
     in
         List.foldr updateAttributes ( 0, Cmd.none ) attrs
 
@@ -133,7 +129,7 @@ type Msg
     | Remove
 
 
-update : Msg -> Model -> ( Model, Cmd msg, Event )
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
         Increment ->
@@ -144,12 +140,12 @@ update msg model =
 
         UpdateValue val ->
             if model == val then
-                ( model, Cmd.none, noEvent )
+                ( model, Cmd.none )
             else
-                ( val, Cmd.none, event "counter-update" (JE.int val) )
+                ( val, event "counter-update" (JE.int val) )
 
         Remove ->
-            ( model, Cmd.none, event "counter-remove" (JE.null) )
+            ( model, event "counter-remove" (JE.null) )
 
 
 view : Model -> Html Msg
