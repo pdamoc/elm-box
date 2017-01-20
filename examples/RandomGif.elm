@@ -23,11 +23,11 @@ component : Component
 component =
     Box.define
         { name = name
-        , init = \_ -> init
+        , attributeDecoder = attributeDecoder
+        , init = init
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
-        , input = input
         , css = """
         """
         }
@@ -48,7 +48,7 @@ randomGif =
 -}
 topic : String -> Attribute msg
 topic =
-    attribute "elm-topic"
+    attribute "topic"
 
 
 {-| Event for when the user clicks More
@@ -60,10 +60,10 @@ onMore msg =
 
 {-| a decoder that helps feed the arguments back into the component as messages
 -}
-input : String -> String -> Decoder Msg
-input name value =
+attributeDecoder : String -> String -> Decoder Msg
+attributeDecoder name value =
     case name of
-        "elm-topic" ->
+        "topic" ->
             Json.succeed (ChangeTopic value)
 
         _ ->
@@ -80,9 +80,17 @@ type alias Model =
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Model "cats" "assets/waiting.gif", getRandomGif "cats" )
+init : List Msg -> ( Model, Cmd Msg )
+init attrs =
+    let
+        updateAttributes msg ( model, cmds ) =
+            let
+                ( newModel, cmd, _ ) =
+                    update msg model
+            in
+                ( newModel, cmd )
+    in
+        List.foldr updateAttributes ( Model "cats" "assets/waiting.gif", getRandomGif "cats" ) attrs
 
 
 type Msg

@@ -1,4 +1,4 @@
-module LabeledInc exposing (labeledInc, label, onInc)
+module LabeledInc exposing (labeledInc, label, value, onInc)
 
 import Html exposing (..)
 import Html.Attributes exposing (attribute, name)
@@ -17,11 +17,11 @@ component : Component
 component =
     Box.define
         { name = "aux-labeled-inc"
+        , attributeDecoder = attributeDecoder
         , init = init
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
-        , input = input
         , css = """
         aux-labeled-inc button {color: #f00 }
         """
@@ -46,6 +46,13 @@ label =
     attribute "aux-label"
 
 
+{-| attribute for setting the value of the component
+-}
+value : Int -> Attribute msg
+value val =
+    attribute "value" (toString val)
+
+
 {-| Event for when the component increments
 -}
 onInc : (Int -> msg) -> Attribute msg
@@ -55,11 +62,19 @@ onInc tagger =
 
 {-| a decoder that helps feed the arguments back into the component as messages
 -}
-input : String -> String -> Decoder Msg
-input name value =
+attributeDecoder : String -> String -> Decoder Msg
+attributeDecoder name value =
     case name of
         "aux-label" ->
             Json.succeed (UpdateLabel value)
+
+        "value" ->
+            case Json.decodeString Json.int value of
+                Ok val ->
+                    Json.succeed (UpdateValue val)
+
+                Err _ ->
+                    Json.fail "invalid value"
 
         _ ->
             Json.fail "unknown attribute"
@@ -75,27 +90,15 @@ type alias Model =
     }
 
 
-init : List ( String, String ) -> ( Model, Cmd Msg )
+init : List Msg -> ( Model, Cmd Msg )
 init attrs =
     let
-        updateAttributes ( key, val ) ( model, cmds ) =
-            case key of
-                "aux-label" ->
-                    ( { model | label = val }, cmds )
-
-                "value" ->
-                    case Json.decodeString Json.int val of
-                        Ok value ->
-                            ( { model | value = value }, cmds )
-
-                        Err _ ->
-                            ( model, cmds )
-
-                _ ->
-                    ( model, cmds )
-
-        log =
-            Debug.log "attr:" attrs
+        updateAttributes msg ( model, cmds ) =
+            let
+                ( newModel, cmd, _ ) =
+                    update msg model
+            in
+                ( newModel, cmd )
     in
         List.foldr updateAttributes ( Model 0 "Count: ", Cmd.none ) attrs
 
@@ -103,6 +106,7 @@ init attrs =
 type Msg
     = Click
     | UpdateLabel String
+    | UpdateValue Int
 
 
 update : Msg -> Model -> ( Model, Cmd msg, Maybe ( String, Value ) )
@@ -113,6 +117,9 @@ update msg model =
 
         UpdateLabel label ->
             ( { model | label = label }, Cmd.none, Nothing )
+
+        UpdateValue val ->
+            ( { model | value = val }, Cmd.none, Nothing )
 
 
 view : Model -> Html Msg

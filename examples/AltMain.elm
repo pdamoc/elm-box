@@ -20,11 +20,11 @@ component : Component
 component =
     Box.define
         { name = name
-        , init = \_ -> ( Model 0 0 "dogs", Cmd.none )
+        , attributeDecoder = attributeDecoder
+        , init = init
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
-        , input = input
         , css = """
         """
         }
@@ -32,8 +32,8 @@ component =
 
 {-| a decoder that helps feed the arguments back into the component as messages
 -}
-input : String -> String -> Decoder Msg
-input name value =
+attributeDecoder : String -> String -> Decoder Msg
+attributeDecoder name value =
     case name of
         "topic" ->
             Json.succeed (SetTopic value)
@@ -73,6 +73,19 @@ type alias Model =
     }
 
 
+init : List Msg -> ( Model, Cmd Msg )
+init attrs =
+    let
+        updateAttributes msg ( model, cmds ) =
+            let
+                ( newModel, cmd, _ ) =
+                    update msg model
+            in
+                ( newModel, cmd )
+    in
+        List.foldr updateAttributes ( Model 0 0 "dogs", Cmd.none ) attrs
+
+
 type Msg
     = IncOne Int
     | IncTwo Int
@@ -95,10 +108,10 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ labeledInc [ label "Counter: ", onInc IncOne ] []
+        [ labeledInc [ label "CounterOne: ", onInc IncOne, value model.inc1 ] []
         , div [] [ text (toString model.inc1) ]
         , br [] []
-        , labeledInc [ label "Counter: ", onInc IncTwo ] []
+        , labeledInc [ label "CounterTwo: ", onInc IncTwo, value model.inc2 ] []
         , div [] [ text (toString model.inc2) ]
         , br [] []
         , div []

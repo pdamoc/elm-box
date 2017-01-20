@@ -94,19 +94,22 @@ function initializeWC(node, impl)
     init = impl.init,
     update = impl.update,
     subscriptions = impl.subscriptions,
-    input = impl.input,
+    attributeDecoder = impl.attributeDecoder,
     renderer = _elm_lang$virtual_dom$Native_VirtualDom.normalRenderer(node, impl.view), 
     attrs = node.attributes,
-    flags = _elm_lang$core$Native_List.Nil 
+    incoming = _elm_lang$core$Native_List.Nil 
       
     for (var i = attrs.length; i--; )
     { 
-      flags = _elm_lang$core$Native_List.Cons(_elm_lang$core$Native_Utils.Tuple2(attrs[i].name, attrs[i].value), flags);
+      var result = A2(attributeDecoder, attrs[i].name, attrs[i].value)
+      if (result.tag == "succeed"){
+        incoming = _elm_lang$core$Native_List.Cons(result.msg, incoming);
+      }
     }
 
    
 
-  init =  init( flags)  
+  init =  init(incoming)  
 
   // ambient state
   var managers = {};
@@ -168,7 +171,7 @@ function initializeWC(node, impl)
 
   
   node.send = function(name, value){
-    var results = A2(input, name, value);
+    var results = A2(attributeDecoder, name, value);
     if (results.tag == "succeed"){
       enqueue(results.msg);
     }
@@ -193,7 +196,6 @@ function define(impl){
 
         onChanged: function (name, prev, curr) {
           this.send(name, curr);
-          console.log(name, prev, curr)
         }
     });
 
