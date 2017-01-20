@@ -28,9 +28,18 @@ component =
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
-        , css = """
-        """
+        , css = css
         }
+
+
+css : String
+css =
+    """
+elm-random-gif div {
+    float: left;
+    margin: 10px;
+}
+"""
 
 
 
@@ -179,3 +188,11 @@ getRandomGif topic =
 decodeGifUrl : Json.Decoder String
 decodeGifUrl =
     Json.at [ "data", "image_url" ] Json.string
+
+
+main : Html msg
+main =
+    div []
+        [ randomGif [ topic "cats" ] []
+        , randomGif [ topic "dogs" ] []
+        ]

@@ -143,6 +143,6 @@ view model =
 main : Html msg
 main =
     div []
-        [ counter [] []
-        , counter [] []
+        [ counter [ value 4 ] []
+        , counter [ value 2 ] []
         ]

@@ -127,3 +127,8 @@ view model =
     div []
         [ button [ onClick Click ] [ text (model.label ++ (toString model.value)) ]
         ]
+
+
+main : Html msg
+main =
+    labeledInc [] []
