@@ -1,6 +1,7 @@
 module Heretic exposing (..)
 
 import Html exposing (Html, div, program, text, br, button)
+import Html.Attributes exposing (id)
 import Html.Events exposing (onClick)
 import LabeledInc exposing (..)
 import RandomGif exposing (..)
@@ -26,6 +27,7 @@ component =
         , view = view
         , subscriptions = \_ -> Sub.none
         , css = """
+        #blue button {color: #00f!important }
         """
         }
 
@@ -111,7 +113,7 @@ view model =
         [ labeledInc [ label "CounterOne: ", onInc IncOne, value model.inc1 ] []
         , div [] [ text (toString model.inc1) ]
         , br [] []
-        , labeledInc [ label "CounterTwo: ", onInc IncTwo, value model.inc2 ] []
+        , labeledInc [ label "CounterTwo: ", onInc IncTwo, value model.inc2, id "blue" ] []
         , div [] [ text (toString model.inc2) ]
         , br [] []
         , div []

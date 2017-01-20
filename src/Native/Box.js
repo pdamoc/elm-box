@@ -62,8 +62,9 @@ var DOMClass = (function (O,o) {
     }
     if (stylesheet) {
       descriptors.createdCallback.value = function () {
-        if (!(stylesheet in css))
+        if (!(name in css))
           loadCSS(this.ownerDocument || document, stylesheet);
+          css[name] = true
         if (constructor) constructor.apply(this, arguments);
       };
     }
