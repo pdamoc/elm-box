@@ -123,3 +123,8 @@ view model =
             ]
         , randomGif [ topic model.topic ] []
         ]
+
+
+main : Html msg
+main =
+    Html.node "main-app" [] []

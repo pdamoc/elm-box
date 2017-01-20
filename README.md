@@ -5,8 +5,7 @@ in the `examples` folder run:
 
     elm-package install -y
     python patchCore.py
-    elm-make Main.elm --output=elm.js
-    elm-make AltMain.elm --output=app.js
+    elm-reactor
 
 
-open `Test.html` and `AltMain.html` to see the results
+navigate to [http://localhost:8000/](http://localhost:8000/)
