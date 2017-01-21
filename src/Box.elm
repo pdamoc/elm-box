@@ -1,4 +1,4 @@
-module Box exposing (Box, define, event)
+module Box exposing (Box, define, defineSimple, event)
 
 {-| Helper to define pseudo-web-components
 
@@ -6,13 +6,13 @@ module Box exposing (Box, define, event)
 @docs Box
 
 # Functions
-@docs define, event
+@docs define, defineSimple, event
 -}
 
 import Native.Box
 import Html exposing (Html)
 import Json.Encode exposing (Value)
-import Json.Decode exposing (Decoder)
+import Json.Decode exposing (Decoder, fail)
 
 
 --
@@ -55,6 +55,29 @@ define :
     -> Box
 define =
     Native.Box.define
+
+
+{-| Define a Simple Box
+
+equivalent to beginnerProgram
+-}
+defineSimple :
+    { name : String
+    , model : model
+    , update : msg -> model -> model
+    , view : model -> Html msg
+    }
+    -> Box
+defineSimple impl =
+    define
+        { name = impl.name
+        , attributeDecoder = \_ _ -> fail ""
+        , init = \_ -> ( impl.model, Cmd.none )
+        , update = \m mdl -> ( impl.update m mdl, Cmd.none )
+        , subscriptions = \_ -> Sub.none
+        , view = impl.view
+        , css = ""
+        }
 
 
 {-| Receives the name of the event and a payload. It will generate an event
