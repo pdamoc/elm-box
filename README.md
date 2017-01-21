@@ -3,9 +3,8 @@
 
 # To play 
 
-in the `examples` folder run:
-
-
+    git clone https://github.com/pdamoc/elm-box.git
+    cd elm-box/examples
     elm-package install -y
     python patchCore.py
     elm-reactor
@@ -15,6 +14,23 @@ navigate to [http://localhost:8000/](http://localhost:8000/)
 The examples show how to create boxes and how to compose them in your elm apps. 
 
 The `patchCore.py` is a temporary measure. It simply adds a few lines that exposes private functions needed by the implementation. Two files are affected: `Platform.js` and `VirtualDom.js`.  
+
+# To use in a test project 
+
+Install  `elm-github-install` using `npm install elm-github-install -g` (if you don't have it).
+
+Download [patchCore.py](https://raw.githubusercontent.com/pdamoc/elm-box/master/examples/patchCore.py).
+
+Add to your `elm-package.json` the following dependency 
+
+    "pdamoc/elm-box": "1.0.0 <= v < 2.0.0"
+
+And run the following: 
+    
+    elm-github-install
+    python patchCore.py
+
+You're now all set! :) 
 
 # Simple Example 
 
