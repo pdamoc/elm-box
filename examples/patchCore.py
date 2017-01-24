@@ -1,7 +1,13 @@
 #!/usr/local/bin/python
 
-plat = "./elm-stuff/packages/elm-lang/core/5.0.0/src/Native/Platform.js"
-vdom = "./elm-stuff/packages/elm-lang/virtual-dom/2.0.3/src/Native/VirtualDom.js"
+import os, re
+
+def max_ver(path):
+    versions = filter(re.compile('[0-9]+.[0-9]+.[0-9]+').match, os.listdir(path))
+    return  ".".join(map(str, max([map(int, i.split(".")) for i in versions])))
+
+plat = "./elm-stuff/packages/elm-lang/core/" + max_ver("./elm-stuff/packages/elm-lang/core")+"/src/Native/Platform.js"
+vdom = "./elm-stuff/packages/elm-lang/virtual-dom/" + max_ver("./elm-stuff/packages/elm-lang/virtual-dom/")+"/src/Native/VirtualDom.js"
 
 platCont = ""
 with open(plat, "r") as f:

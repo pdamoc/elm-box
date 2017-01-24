@@ -6,7 +6,7 @@ import Html.Events exposing (..)
 import Box exposing (..)
 import Json.Encode as JE exposing (Value)
 import Json.Decode as Json exposing (Decoder)
-import List.Extra exposing (singleton)
+import List exposing (singleton)
 import Css exposing (..)
 import Css.Elements
 
