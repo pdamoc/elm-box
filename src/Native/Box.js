@@ -180,9 +180,33 @@ function event(name, payload){
   };
 }
 
+function styled(name, cls, styles){ 
+  if (!(name in boxRegistry) ){
+    var proto;  
+    var protoName = "HTML"+cls+"Element"
+    if (protoName in window) {
+        proto = Object.create(window[protoName].prototype);
+    } else {
+        proto = Object.create(HTMLElement.prototype);
+    }
+
+    proto.createdCallback = function(){
+      if (!(name in css)){
+        loadCSS(this.ownerDocument || document, styles);
+        css[name] = true 
+      };
+    };
+
+    document.registerElement(name, { prototype:proto });
+    boxRegistry[name] = true
+  }
+  return _elm_lang$virtual_dom$Native_VirtualDom.node(name)
+}
+
 return {
     box: box,
-    event: F2(event)
+    styled: F3(styled),
+    event: F2(event) 
 };
 
 }();

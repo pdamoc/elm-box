@@ -1,9 +1,9 @@
-module Box exposing (box, simpleBox, event)
+module Box exposing (box, simpleBox, styled, event)
 
 {-| Helper to define pseudo-web-components
 
 # Functions
-@docs box, simpleBox, event
+@docs box, simpleBox, event, styled
 -}
 
 import Native.Box
@@ -81,3 +81,15 @@ with the provided name where the payload is in the `value` property of the event
 event : String -> Value -> Cmd msg
 event =
     Native.Box.event
+
+
+{-| create a new element by adding CSS to an base tag.
+First parameter is the name of the new element, second is the base (e.g. Button)
+and the third is the syles as String properly selected with the name
+
+    redH1 = styled "red-h1" "Heading" "red-h1 {color: red; display: block; font-size: 2em; margin-top: 0.67em; margin-bottom: 0.67em; margin-left: 0; margin-right: 0;font-weight: bold;}"
+
+-}
+styled : String -> String -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
+styled =
+    Native.Box.styled
