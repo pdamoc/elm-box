@@ -20,7 +20,7 @@ import Json.Decode exposing (Decoder, fail)
 This definition has the side effect of registering the `custom element`
 
 The fiels are:
-    - `name` : the name of the `custom element`.
+    - `name` : the name of the `custom element`. The name MUST contain a hyphen! (e.g. "my-app")
     - `attributeDecoder` : a function that receives a name and a value for the attributes
      that have been given or have been updated and returns a decoder that converts
      the values into a message that the `custom element` will receive in its `update`.
@@ -32,7 +32,7 @@ The fiels are:
     - `view`: standard TEA `view`
     - `css` : a String containing the CSS for the `custom element`. Please make sure to
     use the `name` of the `custom element` as a selector for each internal rule.
-    (e.g. "my-app button { color: #f00 }" where "my-app" is the `name`)
+    (e.g. "my-app button { color: #f00 }")
 -}
 box :
     { name : String
