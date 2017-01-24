@@ -18,9 +18,9 @@ boxName =
 
 {-| Defines the box
 -}
-box : Box
-box =
-    Box.define
+labeledInc : List (Attribute msg) -> List (Html msg) -> Html msg
+labeledInc =
+    Box.box
         { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
@@ -35,13 +35,6 @@ box =
 
 
 -- INTERFACE FOR THE COMPONENT
-
-
-{-| the Html node that ends up being used
--}
-labeledInc : List (Attribute msg) -> List (Html msg) -> Html msg
-labeledInc =
-    node boxName
 
 
 {-| attribute for setting the label of the component

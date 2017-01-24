@@ -1,27 +1,18 @@
-module Box exposing (Box, define, defineSimple, event)
+module Box exposing (box, simpleBox, event)
 
 {-| Helper to define pseudo-web-components
 
-# Types
-@docs Box
-
 # Functions
-@docs define, defineSimple, event
+@docs box, simpleBox, event
 -}
 
 import Native.Box
-import Html exposing (Html)
+import Html exposing (Html, Attribute)
 import Json.Encode exposing (Value)
 import Json.Decode exposing (Decoder, fail)
 
 
 --
-
-
-{-| Opaque Box type
--}
-type Box
-    = Box
 
 
 {-| Define a Box
@@ -43,33 +34,37 @@ The fiels are:
     use the `name` of the `custom element` as a selector for each internal rule.
     (e.g. "my-app button { color: #f00 }" where "my-app" is the `name`)
 -}
-define :
+box :
     { name : String
-    , attributeDecoder : String -> String -> Decoder msg
-    , init : List msg -> ( model, Cmd msg )
-    , update : msg -> model -> ( model, Cmd msg )
-    , subscriptions : model -> Sub msg
-    , view : model -> Html msg
+    , attributeDecoder : String -> String -> Decoder innerMsg
+    , init : List innerMsg -> ( model, Cmd innerMsg )
+    , update : innerMsg -> model -> ( model, Cmd innerMsg )
+    , subscriptions : model -> Sub innerMsg
+    , view : model -> Html innerMsg
     , css : String
     }
-    -> Box
-define =
-    Native.Box.define
+    -> List (Attribute msg)
+    -> List (Html msg)
+    -> Html msg
+box =
+    Native.Box.box
 
 
 {-| Define a Simple Box
 
 equivalent to beginnerProgram
 -}
-defineSimple :
+simpleBox :
     { name : String
     , model : model
-    , update : msg -> model -> model
-    , view : model -> Html msg
+    , update : innerMsg -> model -> model
+    , view : model -> Html innerMsg
     }
-    -> Box
-defineSimple impl =
-    define
+    -> List (Attribute msg)
+    -> List (Html msg)
+    -> Html msg
+simpleBox impl =
+    box
         { name = impl.name
         , attributeDecoder = \_ _ -> fail ""
         , init = \_ -> ( impl.model, Cmd.none )

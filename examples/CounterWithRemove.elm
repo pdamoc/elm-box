@@ -16,11 +16,11 @@ boxName =
     "elm-counter-with-remove"
 
 
-{-| Defines the component
+{-| Defines the box
 -}
-component : Box
-component =
-    Box.define
+counterWithRemove : List (Attribute msg) -> List (Html msg) -> Html msg
+counterWithRemove =
+    Box.box
         { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
@@ -58,13 +58,6 @@ elm-counter-with-remove button {
 
 
 -- INTERFACE FOR THE COMPONENT
-
-
-{-| the Html node that ends up being used
--}
-counterWithRemove : List (Attribute msg) -> List (Html msg) -> Html msg
-counterWithRemove =
-    node boxName
 
 
 {-| attribute for setting the value of the counter

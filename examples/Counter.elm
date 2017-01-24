@@ -16,11 +16,11 @@ boxName =
     "elm-counter"
 
 
-{-| Defines the box
+{-| Defines the counter
 -}
-box : Box
-box =
-    Box.define
+counter : List (Attribute msg) -> List (Html msg) -> Html msg
+counter =
+    Box.box
         { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
@@ -59,13 +59,6 @@ elm-counter button {
 
 
 -- INTERFACE FOR THE COMPONENT
-
-
-{-| the Html node that ends up being used
--}
-counter : List (Attribute msg) -> List (Html msg) -> Html msg
-counter =
-    node boxName
 
 
 {-| attribute for setting the value of the counter
@@ -149,4 +142,4 @@ view model =
 
 main : Html msg
 main =
-    counter [] []
+    counter [ value 5 ] []

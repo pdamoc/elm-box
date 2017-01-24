@@ -19,9 +19,9 @@ boxName =
 
 {-| Defines the box
 -}
-box : Box
-box =
-    Box.define
+randomGif : List (Attribute msg) -> List (Html msg) -> Html msg
+randomGif =
+    Box.box
         { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
@@ -44,13 +44,6 @@ elm-random-gif div {
 
 
 -- INTERFACE FOR THE BOX
-
-
-{-| the Html node that ends up being used
--}
-randomGif : List (Attribute msg) -> List (Html msg) -> Html msg
-randomGif =
-    node boxName
 
 
 {-| attribute for setting the topic of the component

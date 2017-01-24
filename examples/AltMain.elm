@@ -16,9 +16,9 @@ name =
 
 {-| Defines the box
 -}
-box : Box
-box =
-    Box.define
+main : Html msg
+main =
+    Box.box
         { name = name
         , attributeDecoder = attributeDecoder
         , init = init
@@ -29,6 +29,8 @@ box =
         #blue button {color: #00f }
         """
         }
+        []
+        []
 
 
 {-| a decoder that helps feed the arguments back into the box as messages
@@ -118,8 +120,3 @@ view model =
             ]
         , randomGif [ topic model.topic ] []
         ]
-
-
-main : Html msg
-main =
-    Html.node "main-app" [] []

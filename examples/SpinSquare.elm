@@ -21,9 +21,9 @@ boxName =
 
 {-| Defines the box
 -}
-box : Box
-box =
-    Box.define
+spinSquare : List (Html.Attribute msg) -> List (Html msg) -> Html msg
+spinSquare =
+    Box.box
         { name = boxName
         , attributeDecoder = \_ _ -> Json.fail ""
         , init = \_ -> ( init, Cmd.none )
@@ -42,11 +42,6 @@ spin-square div {
 
 }
 """
-
-
-spinSquare : List (Html.Attribute msg) -> List (Html msg) -> Html msg
-spinSquare =
-    node boxName
 
 
 

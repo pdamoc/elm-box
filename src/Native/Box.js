@@ -146,23 +146,29 @@ function loadCSS(document, css) {
     document.head.insertBefore(style, document.head.lastChild);
 }
 
-function define(impl){
-  var proto = Object.create(HTMLElement.prototype);
+var boxRegistry = Object.create(null);
 
-  proto.createdCallback = function(){
-    initializeWC(this, impl); 
-    if (!(impl.name in css)){
-      loadCSS(this.ownerDocument || document, impl.css);
-      css[impl.name] = true 
+function box(impl){
+  if (!(impl.name in boxRegistry) ){
+    var proto = Object.create(HTMLElement.prototype);
+
+    proto.createdCallback = function(){
+      initializeWC(this, impl); 
+      if (!(impl.name in css)){
+        loadCSS(this.ownerDocument || document, impl.css);
+        css[impl.name] = true 
+      };
     };
-  };
 
 
-  proto.attributeChangedCallback = function (name, prev, curr) {
-    this.send(name, curr);
-  };
-  
-  document.registerElement(impl.name, { prototype:proto });
+    proto.attributeChangedCallback = function (name, prev, curr) {
+      this.send(name, curr);
+    };
+    
+    document.registerElement(impl.name, { prototype:proto });
+    boxRegistry[impl.name] = true
+  }
+  return _elm_lang$virtual_dom$Native_VirtualDom.node(impl.name)
     
 }
 
@@ -175,7 +181,7 @@ function event(name, payload){
 }
 
 return {
-    define: define,
+    box: box,
     event: F2(event)
 };
 

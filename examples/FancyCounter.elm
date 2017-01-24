@@ -21,9 +21,9 @@ boxName =
 
 {-| Defines the box
 -}
-box : Box
-box =
-    Box.define
+counter : List (Attribute msg) -> List (Html msg) -> Html msg
+counter =
+    Box.box
         { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
@@ -88,13 +88,6 @@ css =
 
 
 -- INTERFACE FOR THE COMPONENT
-
-
-{-| the Html node that ends up being used
--}
-counter : List (Attribute msg) -> List (Html msg) -> Html msg
-counter =
-    node boxName
 
 
 {-| attribute for setting the value of the counter
