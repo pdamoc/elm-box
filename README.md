@@ -32,22 +32,18 @@ And run the following:
 
 You're now all set! :) 
 
-# Simple Example 
+# Simple Example
 
 ```elm
 module SimpleBox exposing (..)
 
 import Html exposing (node, div, button, h1, text)
 import Html.Events exposing (onClick)
-import Box exposing (defineSimple)
-
-
-box =
-    defineSimple { name = "simple-box", model = 0, view = view, update = update }
+import Box exposing (simpleBox)
 
 
 main =
-    node "simple-box" [] []
+    simpleBox { name = "simple-box", model = 0, view = view, update = update } [] []
 
 
 view model =
@@ -65,6 +61,44 @@ update msg model =
     case msg of
         Increment ->
             model + 1
+
+```
+# Simple example for Box.styled
+
+```elm
+module SimpleStyled exposing (..)
+
+import Html exposing (div, text)
+import Html.Attributes exposing (attribute)
+import Box
+
+
+simpleStyled =
+    Box.styled "simple-styled" "Span" css
+
+
+disabled =
+    attribute "disabled" "true"
+
+
+css =
+    """
+simple-styled {
+    color : red;
+}
+
+simple-styled[disabled=true] {
+    color : #eee;
+}
+"""
+
+
+main =
+    div []
+        [ simpleStyled [] [ text "Hello enabled" ]
+        , div [] [ simpleStyled [ disabled ] [ text "Hello disabled" ] ]
+        ]
+
 ```
 
 # Full Example 
@@ -89,11 +123,11 @@ boxName =
     "elm-counter"
 
 
-{-| Defines the box
+{-| Defines the counter
 -}
-box : Box
-box =
-    Box.define
+counter : List (Attribute msg) -> List (Html msg) -> Html msg
+counter =
+    Box.box
         { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
@@ -132,13 +166,6 @@ elm-counter button {
 
 
 -- INTERFACE FOR THE COMPONENT
-
-
-{-| the Html node that ends up being used
--}
-counter : List (Attribute msg) -> List (Html msg) -> Html msg
-counter =
-    node boxName
 
 
 {-| attribute for setting the value of the counter
@@ -222,7 +249,8 @@ view model =
 
 main : Html msg
 main =
-    counter [] []
+    counter [ value 5 ] []
+
 ```
 
 # Fancy Example that uses elm-css
@@ -251,9 +279,9 @@ boxName =
 
 {-| Defines the box
 -}
-box : Box
-box =
-    Box.define
+counter : List (Attribute msg) -> List (Html msg) -> Html msg
+counter =
+    Box.box
         { name = boxName
         , attributeDecoder = attributeDecoder
         , init = init
@@ -318,13 +346,6 @@ css =
 
 
 -- INTERFACE FOR THE COMPONENT
-
-
-{-| the Html node that ends up being used
--}
-counter : List (Attribute msg) -> List (Html msg) -> Html msg
-counter =
-    node boxName
 
 
 {-| attribute for setting the value of the counter
